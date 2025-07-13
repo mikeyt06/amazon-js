@@ -1,21 +1,17 @@
-import {cart, addToCart} from '../data/cart.js';
-import {products, loadProducts} from '../data/products.js';
-import {formatCurrency} from './utils/money.js';
+import { cart, addToCart } from '../data/cart.js';
+import { products, loadProducts } from '../data/products.js';
+import { formatCurrency } from './utils/money.js';
 
 loadProducts(renderProductsGrid);
 
-function renderProductsGrid(){
-
-
-
+function renderProductsGrid() {
   let productsHTML = '';
 
   products.forEach((product) => {
     productsHTML += `
       <div class="product-container">
         <div class="product-image-container">
-          <img class="product-image"
-            src="${product.image}">
+          <img class="product-image" src="${product.image}">
         </div>
 
         <div class="product-name limit-text-to-2-lines">
@@ -23,8 +19,7 @@ function renderProductsGrid(){
         </div>
 
         <div class="product-rating-container">
-          <img class="product-rating-stars"
-            src="${product.getStarsUrl()}">
+          <img class="product-rating-stars" src="${product.getStarsUrl()}">
           <div class="product-rating-count link-primary">
             ${product.rating.count}
           </div>
@@ -36,16 +31,9 @@ function renderProductsGrid(){
 
         <div class="product-quantity-container">
           <select data-product-id="${product.id}" class="js-quantity-selector">
-            <option selected value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
+            ${[...Array(10)].map((_, i) => `
+              <option value="${i + 1}" ${i === 0 ? 'selected' : ''}>${i + 1}</option>
+            `).join('')}
           </select>
         </div>
 
@@ -53,13 +41,13 @@ function renderProductsGrid(){
 
         <div class="product-spacer"></div>
 
-        <div class="added-to-cart">
-          <img src="images/icons/checkmark.png">
+        <div class="added-to-cart js-added-to-cart-${product.id}">
+          <img src="../images/icons/checkmark.png">
           Added
         </div>
 
         <button class="add-to-cart-button button-primary js-add-to-cart"
-        data-product-id="${product.id}">
+          data-product-id="${product.id}">
           Add to Cart
         </button>
       </div>
@@ -75,8 +63,7 @@ function renderProductsGrid(){
       cartQuantity += cartItem.quantity;
     });
 
-    document.querySelector('.js-cart-quantity')
-      .innerHTML = cartQuantity;
+    document.querySelector('.js-cart-quantity').innerText = cartQuantity;
   }
 
   setTimeout(() => {
@@ -86,8 +73,17 @@ function renderProductsGrid(){
           const productId = button.dataset.productId;
           const selector = document.querySelector(`.js-quantity-selector[data-product-id="${productId}"]`);
           const quantity = Number(selector?.value || 1);
+
           addToCart(productId, quantity);
           updateCartQuantity();
+
+          // ✅ Show "Added" message
+          const addedMessage = document.querySelector(`.js-added-to-cart-${productId}`);
+          addedMessage.classList.add('added-to-cart-visible');
+
+          setTimeout(() => {
+            addedMessage.classList.remove('added-to-cart-visible');
+          }, 1500);
         });
       });
   }, 0);
