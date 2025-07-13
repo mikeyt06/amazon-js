@@ -5,6 +5,7 @@ import {hello} from 'https://unpkg.com/supersimpledev@1.0.1/hello.esm.js';
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
 import {deliveryOptions, getDeliveryOption} from '../../data/deliveryOptions.js';
 import {renderPaymentSummary} from './paymentSummary.js';
+import { saveToStorage } from '../../data/cart.js';
 
 export function renderOrderSummary() {
   let cartSummaryHTML = '';
@@ -145,6 +146,7 @@ export function renderOrderSummary() {
 
         if (!isNaN(newQuantity) && newQuantity > 0) {
           cartItem.quantity = newQuantity;
+          saveToStorage();
         }
 
         renderOrderSummary();

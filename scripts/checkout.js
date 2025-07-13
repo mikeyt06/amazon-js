@@ -16,9 +16,6 @@ async function loadPage(){
     });
   });
 
-  const cartQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
-  document.querySelector('.js-cart-quantity').innerText = `${cartQuantity} item${cartQuantity !== 1 ? 's' : ''}`;
-
   } catch(error) {
     console.log(error);
   }
