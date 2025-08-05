@@ -2,7 +2,8 @@ import { orders } from "../data/orders.js";
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
 import { getProduct } from "../data/products.js";
 import { loadProducts } from '../data/products.js';
-import { addToCart } from "../data/cart.js";
+import { addToCart, updateCartQuantityDisplay } from "../data/cart.js";
+
 
 loadProducts(() => {
   renderOrdersGrid();
@@ -89,6 +90,8 @@ function renderOrdersGrid() {
   const ordersGrid = document.querySelector('.js-orders-grid');
   ordersGrid.innerHTML = orderHTML;
 
+  updateCartQuantityDisplay();
+
   // Buy it again click
   document.querySelectorAll('.buy-again-button').forEach(button => {
     button.addEventListener('click', (e) => {
@@ -96,9 +99,9 @@ function renderOrdersGrid() {
 
       // Add to cart
       addToCart(productId, 1); // Assuming your cart function takes (id, quantity)
+      updateCartQuantityDisplay();
 
       // Optional: show feedback
-      e.currentTarget.innerHTML = '✔ Added to cart';
       setTimeout(() => {
         e.currentTarget.innerHTML = `
           <img class="buy-again-icon" src="images/icons/buy-again.png">
