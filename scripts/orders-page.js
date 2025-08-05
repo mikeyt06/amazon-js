@@ -2,6 +2,7 @@ import { orders } from "../data/orders.js";
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
 import { getProduct } from "../data/products.js";
 import { loadProducts } from '../data/products.js';
+import { addToCart } from "../data/cart.js";
 
 loadProducts(() => {
   renderOrdersGrid();
@@ -37,7 +38,9 @@ function renderOrdersGrid() {
             <div class="product-quantity">
               Quantity: ${orderItem.quantity}
             </div>
-            <button class="buy-again-button button-primary">
+            <button 
+              class="buy-again-button button-primary"
+              data-product-id="${orderItem.productId}">
               <img class="buy-again-icon" src="images/icons/buy-again.png">
               <span class="buy-again-message">Buy it again</span>
             </button>
@@ -86,6 +89,24 @@ function renderOrdersGrid() {
   const ordersGrid = document.querySelector('.js-orders-grid');
   ordersGrid.innerHTML = orderHTML;
 
+  // Buy it again click
+  document.querySelectorAll('.buy-again-button').forEach(button => {
+    button.addEventListener('click', (e) => {
+      const productId = e.currentTarget.dataset.productId;
+
+      // Add to cart
+      addToCart(productId, 1); // Assuming your cart function takes (id, quantity)
+
+      // Optional: show feedback
+      e.currentTarget.innerHTML = '✔ Added to cart';
+      setTimeout(() => {
+        e.currentTarget.innerHTML = `
+          <img class="buy-again-icon" src="images/icons/buy-again.png">
+          <span class="buy-again-message">Buy it again</span>
+        `;
+      }, 1500);
+    });
+  });
 }
 
 
