@@ -89,9 +89,63 @@
       </div>
     </div>
 
-    <script>
+    <script type="module">
+    import { orders } from "../data/orders.js";
+    import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
+    import { getProduct } from "../data/products.js";
+    import { loadProducts } from '../data/products.js';
+
+    loadProducts(() => {
       const url = new URL(window.location.href);
-      console.log(url.searchParams.get('orderId'));
+      const orderId = url.searchParams.get('orderId');
+      const productId = url.searchParams.get('productId');
+
+      const order = orders.find(o => o.id === orderId);
+      if (!order) {
+        console.error("Order not found");
+        return;
+      }
+      const orderItem = order.products.find(p => p.productId === productId);
+      if (!orderItem) {
+        console.error("Product not found in order");
+        return;
+      }
+
+      const product = getProduct(productId);
+      if (!product) {
+        console.error("Product details not found");
+        return;
+      }
+
+      // Fill in details
+      const deliveryDate = dayjs(orderItem.estimatedDeliveryTime);
+      document.querySelector(".delivery-date").textContent = 
+        `Arriving on ${deliveryDate.format('dddd, MMMM D')}`;
+      
+      document.querySelectorAll(".product-info")[0].textContent = product.name;
+      document.querySelectorAll(".product-info")[1].textContent = `Quantity: ${orderItem.quantity}`;
+      document.querySelector(".product-image").src = product.image;
+
+      // Progress bar calculation
+      const today = dayjs();
+      let progress = 0;
+      let currentStatusIndex = 0;
+
+      if (today.isBefore(deliveryDate)) {
+        progress = 50; // shipped but not yet delivered
+        currentStatusIndex = 1; // "Shipped"
+      } else {
+        progress = 100; // delivered
+        currentStatusIndex = 2; // "Delivered"
+      }
+
+      document.querySelector(".progress-bar").style.width = `${progress}%`;
+
+      // Highlight current status
+      const labels = document.querySelectorAll(".progress-label");
+      labels.forEach(l => l.classList.remove("current-status"));
+      labels[currentStatusIndex].classList.add("current-status");
+    });
     </script>
   </body>
 </html>

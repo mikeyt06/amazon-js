@@ -44,7 +44,7 @@ function renderOrdersGrid() {
           </div>
 
           <div class="product-actions">
-            <a href="tracking.html?orderId=123&productId456">
+            <a href="tracking.html?orderId=${order.id}&productId=${orderItem.productId}">
               <button class="track-package-button button-secondary">
                 Track package
               </button>
